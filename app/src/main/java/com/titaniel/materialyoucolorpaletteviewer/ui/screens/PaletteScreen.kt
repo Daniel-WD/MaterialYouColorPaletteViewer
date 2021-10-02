@@ -2,7 +2,10 @@ package com.titaniel.materialyoucolorpaletteviewer.ui.screens
 
 import android.app.Application
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -10,8 +13,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -145,6 +148,11 @@ class PaletteViewModel @Inject constructor(context: Application) : AndroidViewMo
             "900",
             "1000"
         )
+
+        /**
+         * Labels for different colors.
+         */
+        val COLOR_NAMES = listOf("N1", "N2", "A1", "A2", "A3")
     }
 
     /**
@@ -206,40 +214,74 @@ fun PaletteScreen(colorMatrix: List<List<Color>>) {
 
         Column(modifier = Modifier.padding(16.dp)) {
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-                Text(text = "N1")
-                Text(text = "N2")
-                Text(text = "A1")
-                Text(text = "A2")
-                Text(text = "A3")
+            val yAxisWidth = 41.dp
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = yAxisWidth),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+
+                PaletteViewModel.COLOR_NAMES.forEach {
+
+                    Text(text = it, textAlign = TextAlign.Center)
+                }
             }
 
             BoxWithConstraints {
 
                 // Calculate width and height of tiles
-                val tileWidth = maxWidth / 5
                 val tileHeight = maxHeight / 13
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                Row {
 
-                    colorMatrix.forEachIndexed { i, colorRow ->
+                    Column(
+                        modifier = Modifier
+                            .width(yAxisWidth)
+                            .padding(end = 4.dp),
+                        horizontalAlignment = Alignment.End
+                    ) {
 
-                        Row {
+                        PaletteViewModel.SHADE_LABELS.forEach {
 
-                            colorRow.forEach { color ->
+                            Box(
+                                modifier = Modifier.height(tileHeight),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
 
-                                Tile(
-                                    color = color,
-                                    text = PaletteViewModel.SHADE_LABELS[i],
-                                    tileWidth,
-                                    tileHeight
-                                )
+                                Text(text = it)
                             }
                         }
                     }
+
+                    BoxWithConstraints {
+
+                        val tileWidth = maxWidth / 5
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            colorMatrix.forEach { colorRow ->
+
+                                Row {
+
+                                    colorRow.forEach { color ->
+
+                                        Tile(
+                                            color = color,
+                                            width = tileWidth,
+                                            height = tileHeight
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                 }
+
             }
         }
 
@@ -250,7 +292,7 @@ fun PaletteScreen(colorMatrix: List<List<Color>>) {
 }
 
 @Composable
-fun Tile(color: Color, text: String, width: Dp, height: Dp) {
+fun Tile(color: Color, width: Dp, height: Dp) {
 
     // Theme shapes
     val shapes = MaterialTheme.shapes
@@ -260,17 +302,9 @@ fun Tile(color: Color, text: String, width: Dp, height: Dp) {
             .size(width = width, height = height)
             .padding(4.dp),
         shape = shapes.small,
-        color = color,
+        color = color
     ) {
 
-        Box(contentAlignment = Alignment.Center) {
-
-            Text(
-                text = text,
-                color = if(color.luminance() > 0.2f) Color.Black else Color.White,
-                style = MaterialTheme.typography.body1
-            )
-        }
     }
 }
 
