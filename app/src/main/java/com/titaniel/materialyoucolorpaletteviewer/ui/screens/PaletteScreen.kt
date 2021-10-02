@@ -10,6 +10,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -266,7 +267,7 @@ fun Tile(color: Color, text: String, width: Dp, height: Dp) {
 
             Text(
                 text = text,
-                color = contentColorFor(backgroundColor = color),
+                color = if(color.luminance() > 0.2f) Color.Black else Color.White,
                 style = MaterialTheme.typography.body1
             )
         }
