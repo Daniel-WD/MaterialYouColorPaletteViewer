@@ -1,6 +1,7 @@
 package com.titaniel.materialyoucolorpaletteviewer.ui.screens
 
 import android.app.Application
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -294,18 +295,18 @@ fun PaletteScreen(colorMatrix: List<List<Color>>) {
 @Composable
 fun Tile(color: Color, width: Dp, height: Dp) {
 
-    // Theme shapes
-    val shapes = MaterialTheme.shapes
-
     Surface(
         modifier = Modifier
             .size(width = width, height = height)
             .padding(4.dp),
-        shape = shapes.small,
-        color = color
-    ) {
-
-    }
+        shape = MaterialTheme.shapes.small,
+        color = color,
+        border = BorderStroke(
+            1.dp,
+            // Use black border when light theme and white border on dark theme for better background contrast
+            (if (MaterialTheme.colors.isLight) Color.Black else Color.White).copy(alpha = 0.1f)
+        )
+    ) {}
 }
 
 @Composable
